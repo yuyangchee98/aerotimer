@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAppContext } from '../../context/AppContext';
+import { formatFlightDuration, formatDistance } from '../../utils/flightPath';
 
 const TimerDisplay: React.FC = () => {
   const { state } = useAppContext();
@@ -19,17 +20,29 @@ const TimerDisplay: React.FC = () => {
     <div className="text-center space-y-6">
       {/* Flight Route Info */}
       {flight.route && (
-        <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-white">
-          <div className="flex items-center justify-between text-sm mb-2">
-            <span className="font-medium">{flight.route.origin?.iata || flight.route.origin?.icao}</span>
-            <span className="text-blue-200">✈</span>
-            <span className="font-medium">{flight.route.destination?.iata || flight.route.destination?.icao}</span>
+        <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 text-white">
+          <div className="flex items-center justify-between text-lg mb-3">
+            <div className="text-center">
+              <div className="font-bold text-xl">{flight.route.origin?.iata || flight.route.origin?.icao}</div>
+              <div className="text-sm text-blue-200">{flight.route.origin?.city}</div>
+            </div>
+            <div className="flex-1 mx-6">
+              <div className="flex items-center justify-center space-x-2">
+                <div className="flex-1 h-px bg-blue-300"></div>
+                <span className="text-blue-200 text-2xl">✈</span>
+                <div className="flex-1 h-px bg-blue-300"></div>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="font-bold text-xl">{flight.route.destination?.iata || flight.route.destination?.icao}</div>
+              <div className="text-sm text-blue-200">{flight.route.destination?.city}</div>
+            </div>
           </div>
-          <div className="text-xs text-blue-200">
-            {flight.route.origin?.city} → {flight.route.destination?.city}
-          </div>
-          <div className="text-xs text-blue-300 mt-1">
-            {Math.round(flight.route.distance)} km • {Math.round(flight.route.duration / 60)} min flight
+          
+          <div className="flex justify-center space-x-6 text-sm text-blue-200">
+            <span>📏 {formatDistance(flight.route.distance)}</span>
+            <span>⏱️ {formatFlightDuration(flight.route.duration)}</span>
+            <span>🛫 {Math.round(flight.route.progress * 100)}% complete</span>
           </div>
         </div>
       )}
@@ -45,9 +58,9 @@ const TimerDisplay: React.FC = () => {
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-white/20 rounded-full h-2">
+        <div className="w-full bg-white/20 rounded-full h-3">
           <div 
-            className={`h-2 rounded-full transition-all duration-1000 ${
+            className={`h-3 rounded-full transition-all duration-1000 ${
               timer.isComplete ? 'bg-green-400' : 'bg-blue-400'
             }`}
             style={{ width: `${progressPercentage}%` }}
@@ -56,11 +69,18 @@ const TimerDisplay: React.FC = () => {
 
         {/* Status */}
         <div className="text-lg text-blue-200">
-          {timer.isComplete ? '🎉 Flight Complete!' : 
+          {timer.isComplete ? '🎉 Flight Complete! Welcome to your destination!' : 
            timer.isRunning ? '✈️ In Flight' :
-           timer.isPaused ? '⏸️ Paused' : 
-           '🛫 Ready for Takeoff'}
+           timer.isPaused ? '⏸️ Flight Paused' : 
+           flight.route ? '🛫 Ready for Takeoff' : '🗺️ Select your route to begin'}
         </div>
+        
+        {/* Flight duration info when not started */}
+        {!timer.isRunning && !timer.isPaused && flight.route && (
+          <div className="text-sm text-blue-300">
+            Flight time: {formatFlightDuration(timer.duration)}
+          </div>
+        )}
       </div>
     </div>
   );

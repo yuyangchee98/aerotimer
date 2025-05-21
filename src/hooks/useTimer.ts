@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext';
 
 export const useTimer = () => {
   const { state, dispatch, actions } = useAppContext();
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (state.timer.isRunning && state.timer.remainingTime > 0) {
