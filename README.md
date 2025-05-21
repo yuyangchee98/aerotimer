@@ -1,12 +1,42 @@
-# React + Vite
+# AeroTimer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A flight-themed Pomodoro timer that visualizes your work sessions as flights between airports on an interactive 3D globe.
 
-Currently, two official plugins are available:
+## What it does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Select departure and arrival airports from around the world. Start a timer session and watch an airplane move along your chosen flight path as time progresses. When your session completes, you've "arrived" at your destination.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Interactive 3D globe with real Earth textures
+- Search and select from thousands of airports worldwide
+- Timer duration automatically adjusts based on flight distance
+- Real-time airplane position tracking during sessions
+- Clean, responsive interface
+
+## Installation
+
+```bash
+git clone https://github.com/yourusername/aerotimer.git
+cd aerotimer
+npm install
+npm run dev
+```
+
+## Usage
+
+1. Search for departure and arrival airports by name, city, or airport code
+2. Click start to begin your work session
+3. Watch your progress on the globe as the airplane moves along the route
+4. Complete your session to "land" at your destination
+
+## Technology
+
+- React + TypeScript
+- Three.js for 3D globe rendering
+- Tailwind CSS for styling
+- Vite for build tooling
+
+## License
+
+MIT
