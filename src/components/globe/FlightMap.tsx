@@ -112,7 +112,8 @@ const FlightMap: React.FC = () => {
         name: state.flight.route.origin.name,
         code: state.flight.route.origin.iata || state.flight.route.origin.icao,
         type: 'origin',
-        color: '#22c55e', // Green for origin
+        color: '#10b981', // Emerald green for origin
+        size: 0.8,
       });
     }
     
@@ -124,14 +125,15 @@ const FlightMap: React.FC = () => {
         name: state.flight.route.destination.name,
         code: state.flight.route.destination.iata || state.flight.route.destination.icao,
         type: 'destination',
-        color: '#ef4444', // Red for destination
+        color: '#f59e0b', // Amber for destination
+        size: 0.8,
       });
     }
     
     return points;
   }, [state.flight.route]);
 
-  // Prepare flight path arc
+  // Prepare flight path arc with enhanced styling
   const flightArcs = React.useMemo(() => {
     if (!state.flight.route || !state.flight.route.origin || !state.flight.route.destination) {
       return [];
@@ -142,7 +144,8 @@ const FlightMap: React.FC = () => {
       startLng: state.flight.route.origin.lon,
       endLat: state.flight.route.destination.lat,
       endLng: state.flight.route.destination.lon,
-      color: state.flight.isActive ? '#3b82f6' : '#64748b', // Blue when active, gray when inactive
+      color: state.flight.isActive ? ['#10b981', '#3b82f6', '#f59e0b'] : '#64748b', // Gradient when active
+      stroke: 3,
     }];
   }, [state.flight.route, state.flight.isActive]);
 
@@ -162,9 +165,9 @@ const FlightMap: React.FC = () => {
       id: 'airplane',
       lat: position.lat,
       lng: position.lon,
-      name: 'In Flight',
+      name: '✈️ In Flight',
       color: '#fbbf24', // Yellow for airplane
-      size: 1.5,
+      size: 1.2,
     }];
   }, [state.flight.route, state.flight.isActive]);
 
@@ -216,47 +219,82 @@ const FlightMap: React.FC = () => {
 
   return (
     <div ref={globeContainerRef} className="absolute inset-0 w-full h-full">
+      {/* Animated starfield background */}
+      <div className="starfield"></div>
+      
+      {/* Nebula effect overlay */}
+      <div className="nebula-overlay"></div>
+      
+      {/* Gradient overlay for depth */}
+      <div className="space-gradient"></div>
+      
       <Globe
         ref={globeRef}
         width={dimensions.width}
         height={dimensions.height}
-        backgroundColor="rgba(0,0,0,1)"
-        globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
+        
+        // Enhanced visual settings
+        backgroundColor="rgba(5,10,25,1)" // Deep space blue
+        backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png" // Stars background
+        
+        // High-quality Earth textures
+        globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
         bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
         
-        // Airport points
+        // Enhanced atmosphere
+        showAtmosphere={true}
+        atmosphereColor="#4f46e5" // Indigo atmosphere
+        atmosphereAltitude={0.25}
+        
+        // Airport points with enhanced styling
         pointsData={[...airportPoints, ...airplanePosition]}
-        pointAltitude={0.01}
-        pointRadius={0.6}
+        pointAltitude={0.015}
+        pointRadius="size"
         pointColor="color"
+        pointsMerge={false}
         pointLabel={(point: any) => `
           <div style="
-            background: rgba(0,0,0,0.8); 
+            background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(30,41,59,0.9)); 
             color: white; 
-            padding: 8px 12px; 
-            border-radius: 8px; 
+            padding: 12px 16px; 
+            border-radius: 12px; 
             font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
           ">
-            <strong>${point.code || point.name}</strong>
-            ${point.name && point.code ? `<br/>${point.name}` : ''}
+            <div style="font-weight: bold; font-size: 16px; margin-bottom: 4px;">
+              ${point.code || point.name}
+            </div>
+            ${point.name && point.code ? `<div style="opacity: 0.8;">${point.name}</div>` : ''}
+            ${point.id === 'airplane' ? '<div style="color: #fbbf24; margin-top: 4px;">Currently in flight</div>' : ''}
           </div>
         `}
         
-        // Flight arcs
+        // Enhanced flight arcs
         arcsData={flightArcs}
-        arcColor="color"
-        arcDashLength={0.6}
+        arcColor="color" 
+        arcDashLength={0.4}
         arcDashGap={0.2}
-        arcDashAnimateTime={2000}
-        arcStroke={2}
+        arcDashInitialGap={() => Math.random()}
+        arcDashAnimateTime={3000}
+        arcStroke="stroke"
+        arcAltitude={0.3}
         
-        // Globe settings
-        showAtmosphere={true}
-        atmosphereColor="#1e40af"
-        atmosphereAltitude={0.2}
-        
-        // Controls (built-in)
+        // Controls
         enablePointerInteraction={true}
+        
+        // Enhanced controls
+        onGlobeReady={() => {
+          if (globeRef.current) {
+            // Set nice initial lighting
+            const globeMaterial = globeRef.current.globeMaterial();
+            if (globeMaterial) {
+              globeMaterial.shininess = 0.1;
+              globeMaterial.transparent = false;
+            }
+          }
+        }}
       />
     </div>
   );
