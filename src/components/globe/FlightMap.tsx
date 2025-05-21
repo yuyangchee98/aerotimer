@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import Globe from 'react-globe.gl';
 import { useAppContext } from '../../context/AppContext';
 import { getAirplanePosition } from '../../utils/flightPath';
@@ -6,7 +6,17 @@ import { getAirplanePosition } from '../../utils/flightPath';
 const FlightMap: React.FC = () => {
   const { state } = useAppContext();
   const globeRef = useRef<any>(null);
+  const globeContainerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
+  
+  // User interaction state
+  const [userIsInteracting, setUserIsInteracting] = useState(false);
+  const [autoFollowEnabled, setAutoFollowEnabled] = useState(true);
+  const interactionTimeoutRef = useRef<number | null>(null);
+
+  // Constants
+  const INTERACTION_RESET_DELAY = 4000; // 4 seconds
+  const MIN_MOVEMENT_THRESHOLD = 0.01; // Minimum airplane movement to warrant camera update
 
   // Handle responsive sizing
   useEffect(() => {
@@ -28,6 +38,65 @@ const FlightMap: React.FC = () => {
       globeRef.current.pointOfView({ lat: 20, lng: 0, altitude: 2.5 }, 0);
     }
   }, []);
+
+  // Handle user interaction detection
+  const handleUserInteraction = useCallback(() => {
+    setUserIsInteracting(true);
+    
+    // Clear existing timeout
+    if (interactionTimeoutRef.current) {
+      clearTimeout(interactionTimeoutRef.current);
+    }
+    
+    // Set new timeout to reset interaction state
+    interactionTimeoutRef.current = window.setTimeout(() => {
+      setUserIsInteracting(false);
+    }, INTERACTION_RESET_DELAY);
+  }, []);
+
+  // Add interaction event listeners to the globe container
+  useEffect(() => {
+    const container = globeContainerRef.current;
+    if (!container) return;
+
+    const handleMouseDown = () => handleUserInteraction();
+    const handleWheel = () => handleUserInteraction();
+    const handleTouchStart = () => handleUserInteraction();
+
+    container.addEventListener('mousedown', handleMouseDown);
+    container.addEventListener('wheel', handleWheel);
+    container.addEventListener('touchstart', handleTouchStart);
+
+    return () => {
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('touchstart', handleTouchStart);
+      if (interactionTimeoutRef.current) {
+        clearTimeout(interactionTimeoutRef.current);
+      }
+    };
+  }, [handleUserInteraction]);
+
+  // Keyboard shortcut for auto-follow toggle
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.target && (event.target as HTMLElement).tagName === 'INPUT') {
+        return;
+      }
+      
+      if (event.key === 'f' || event.key === 'F') {
+        event.preventDefault();
+        setAutoFollowEnabled(prev => !prev);
+        // If re-enabling auto-follow, reset interaction state
+        if (!autoFollowEnabled) {
+          setUserIsInteracting(false);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [autoFollowEnabled]);
 
   // Prepare airport data for globe points
   const airportPoints = React.useMemo(() => {
@@ -99,22 +168,54 @@ const FlightMap: React.FC = () => {
     }];
   }, [state.flight.route, state.flight.isActive]);
 
-  // Auto-rotate globe to follow flight path
+  // Store previous airplane position to detect significant movement
+  const prevAirplanePos = useRef<{ lat: number; lon: number } | null>(null);
+
+  // Smart auto-follow logic - only when user isn't interacting
   useEffect(() => {
-    if (globeRef.current && state.flight.route && state.flight.isActive) {
-      const position = getAirplanePosition(
-        state.flight.route.origin!,
-        state.flight.route.destination!,
-        state.flight.route.progress
-      );
-      
-      // Smoothly pan to airplane position
-      globeRef.current.pointOfView({ lat: position.lat, lng: position.lon, altitude: 2 }, 1000);
+    if (!globeRef.current || !state.flight.route || !state.flight.isActive || !autoFollowEnabled) {
+      return;
     }
-  }, [state.flight.route?.progress, state.flight.isActive]);
+
+    // Don't auto-follow if user is currently interacting
+    if (userIsInteracting) {
+      return;
+    }
+
+    const currentPosition = getAirplanePosition(
+      state.flight.route.origin!,
+      state.flight.route.destination!,
+      state.flight.route.progress
+    );
+
+    // Only update if airplane has moved significantly
+    if (prevAirplanePos.current) {
+      const latDiff = Math.abs(currentPosition.lat - prevAirplanePos.current.lat);
+      const lonDiff = Math.abs(currentPosition.lon - prevAirplanePos.current.lon);
+      
+      if (latDiff < MIN_MOVEMENT_THRESHOLD && lonDiff < MIN_MOVEMENT_THRESHOLD) {
+        return;
+      }
+    }
+
+    // Get current camera position to preserve altitude/zoom
+    const currentPOV = globeRef.current.pointOfView();
+    const preserveAltitude = currentPOV ? currentPOV.altitude : 2;
+
+    // Smoothly pan to airplane position while preserving zoom
+    globeRef.current.pointOfView({ 
+      lat: currentPosition.lat, 
+      lng: currentPosition.lon, 
+      altitude: preserveAltitude 
+    }, 1500);
+
+    // Update previous position
+    prevAirplanePos.current = { lat: currentPosition.lat, lon: currentPosition.lon };
+    
+  }, [state.flight.route?.progress, state.flight.isActive, userIsInteracting, autoFollowEnabled]);
 
   return (
-    <div className="absolute inset-0 w-full h-full">
+    <div ref={globeContainerRef} className="absolute inset-0 w-full h-full">
       <Globe
         ref={globeRef}
         width={dimensions.width}

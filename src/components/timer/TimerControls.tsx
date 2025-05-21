@@ -31,7 +31,7 @@ const TimerControls: React.FC = () => {
           }
           disabled:opacity-50 shadow-lg backdrop-blur-sm
         `}
-        title={timer.isRunning ? 'Pause Flight (Space)' : 'Start Flight (Space)'}
+        title={`${timer.isRunning ? 'Pause Flight (Space)' : 'Start Flight (Space)'} • Press F to toggle flight following`}
       >
         {timer.isRunning ? (
           <Pause size={20} />
@@ -48,7 +48,7 @@ const TimerControls: React.FC = () => {
           bg-white/20 text-white hover:bg-white/30 transition-all
           hover:scale-105 active:scale-95 backdrop-blur-sm border border-white/20
         "
-        title="Reset Timer"
+        title="Reset Timer (R)"
       >
         <RotateCcw size={18} />
       </button>

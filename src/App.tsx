@@ -146,8 +146,9 @@ const AppContent: React.FC = () => {
       {/* Keyboard Hint */}
       {!showOverlays && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-          <div className="bg-black/50 backdrop-blur-md rounded-full px-4 py-2 border border-white/20 text-white text-sm">
-            Press H or ESC to show controls
+          <div className="bg-black/50 backdrop-blur-md rounded-full px-4 py-2 border border-white/20 text-white text-sm text-center">
+            <div>Press H or ESC to show controls</div>
+            <div className="text-xs opacity-70 mt-1">F: Toggle flight follow • Space: Play/Pause • R: Reset</div>
           </div>
         </div>
       )}
