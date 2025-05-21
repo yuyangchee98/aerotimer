@@ -52,7 +52,7 @@ export const useFlightData = (): UseFlightDataReturn => {
       console.error('Error calculating flight duration:', error);
       actions.clearFlightRoute();
     }
-  }, [actions]);
+  }, []); // Empty dependency array since actions are stable
 
   const clearFlightRoute = useCallback(() => {
     actions.clearFlightRoute();

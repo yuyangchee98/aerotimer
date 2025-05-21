@@ -1,0 +1,66 @@
+/* Globe-specific styles */
+.globe-container canvas {
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Smooth loading animation for globe */
+.globe-loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}
+
+/* Custom scrollbar for mobile */
+.globe-container::-webkit-scrollbar {
+  display: none;
+}
+
+.globe-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Improve tooltip styling */
+.globe-tooltip {
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .globe-container canvas {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* Flight path animation enhancement */
+.flight-arc {
+  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.5));
+}
+
+/* Airplane marker glow effect */
+.airplane-marker {
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8));
+  animation: airplane-pulse 2s ease-in-out infinite;
+}
+
+@keyframes airplane-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(251, 191, 36, 1));
+  }
+}
