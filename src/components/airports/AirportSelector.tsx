@@ -206,13 +206,14 @@ const AirportSelector: React.FC<AirportSelectorProps> = ({
             onClick={handleSwapAirports}
             disabled={!origin && !destination}
             className="
-              flex items-center justify-center w-10 h-10 rounded-full
+              flex items-center justify-center w-12 h-12 rounded-full
               bg-white/10 hover:bg-white/20 transition-all
               disabled:opacity-50 disabled:cursor-not-allowed
-              hover:scale-105 active:scale-95
+              hover:scale-105 active:scale-95 border border-white/20
             "
+            title="Swap airports"
           >
-            <ArrowRightLeft className="h-4 w-4 text-white" />
+            <ArrowRightLeft className="h-5 w-5 text-white" />
           </button>
         </div>
         

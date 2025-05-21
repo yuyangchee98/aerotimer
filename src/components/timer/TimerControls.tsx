@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Pause, Square } from 'lucide-react';
+import { Play, Pause, RotateCcw } from 'lucide-react';
 import { useTimer } from '../../hooks/useTimer';
 
 const TimerControls: React.FC = () => {
@@ -31,6 +31,7 @@ const TimerControls: React.FC = () => {
           }
           disabled:opacity-50 shadow-lg
         `}
+        title={timer.isRunning ? 'Pause Flight' : 'Start Flight'}
       >
         {timer.isRunning ? (
           <Pause size={24} />
@@ -39,7 +40,7 @@ const TimerControls: React.FC = () => {
         )}
       </button>
 
-      {/* Reset Button */}
+      {/* Reset Button - FIXED: Changed from Square to RotateCcw and increased size */}
       <button
         onClick={handleReset}
         className="
@@ -47,8 +48,9 @@ const TimerControls: React.FC = () => {
           bg-white/20 text-white hover:bg-white/30 transition-all
           hover:scale-105 active:scale-95 backdrop-blur-sm
         "
+        title="Reset Timer"
       >
-        <Square size={16} />
+        <RotateCcw size={20} />
       </button>
     </div>
   );
