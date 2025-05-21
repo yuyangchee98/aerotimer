@@ -1,9 +1,4 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
+/* Minimal app-level styles for the globe-centric layout */
 
 .logo {
   height: 6em;

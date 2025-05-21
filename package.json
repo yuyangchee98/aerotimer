@@ -1,7 +1,16 @@
 {
   "name": "aerotimer",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "1.0.0",
+  "description": "A flight-themed Pomodoro timer with interactive 3D globe visualization",
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/aerotimer.git"
+  },
+  "homepage": "https://yourusername.github.io/aerotimer",
+  "keywords": ["pomodoro", "timer", "productivity", "globe", "flight", "3d", "react"],
   "type": "module",
   "scripts": {
     "dev": "vite",
