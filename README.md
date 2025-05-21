@@ -1,18 +1,10 @@
 # AeroTimer
 
-A flight-themed Pomodoro timer that visualizes your work sessions as flights between airports on an interactive 3D globe.
+Timer that visualizes your work sessions as flights between airports on an interactive 3D globe.
 
 ## What it does
 
 Select departure and arrival airports from around the world. Start a timer session and watch an airplane move along your chosen flight path as time progresses. When your session completes, you've "arrived" at your destination.
-
-## Features
-
-- Interactive 3D globe with real Earth textures
-- Search and select from thousands of airports worldwide
-- Timer duration automatically adjusts based on flight distance
-- Real-time airplane position tracking during sessions
-- Clean, responsive interface
 
 ## Installation
 
