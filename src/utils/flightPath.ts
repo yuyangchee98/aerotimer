@@ -3,10 +3,9 @@ import { FlightPosition } from '../types/flight';
 import { calculateDistance, interpolatePoint } from './haversine';
 
 // Flight constants
-const AVERAGE_SPEED_KMH = 850; // Commercial aircraft average speed
+const AVERAGE_SPEED_KMH = 800; // Commercial aircraft average speed (750-850 averaged)
 const BUFFER_TIME_MINUTES = 45; // Takeoff, landing, taxi time
 const MIN_FLIGHT_TIME_MINUTES = 15; // Minimum for very short flights
-const MAX_FLIGHT_TIME_MINUTES = 120; // Maximum for productivity session
 
 /**
  * Calculate flight duration between two airports
@@ -32,10 +31,7 @@ export const calculateFlightDuration = (
   // Add buffer time for takeoff/landing
   const totalMinutes = Math.max(
     MIN_FLIGHT_TIME_MINUTES,
-    Math.min(
-      MAX_FLIGHT_TIME_MINUTES,
-      flightTimeMinutes + BUFFER_TIME_MINUTES
-    )
+    flightTimeMinutes + BUFFER_TIME_MINUTES
   );
 
   return {
